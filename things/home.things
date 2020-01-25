@@ -1,0 +1,6 @@
+astro:sun:home  [ geolocation="49.042092, -122.793304", interval=60 ]
+astro:moon:home [ geolocation="49.042092, -122.793304", interval=60 ]
+
+ntp:ntp:demo    [ hostname="nl.pool.ntp.org", refreshInterval=60, refreshNtp=30 ]
+
+// vim: syntax=Xtend

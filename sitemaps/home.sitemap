@@ -1,0 +1,9 @@
+sitemap home label="Home"
+{
+	Frame label="Floors" {
+		Group item=gHU label="Upstairs" icon="firstfloor"
+		Group item=gHD label="Downstairs" icon="groundfloor"
+	}
+}
+
+// vim: syntax=Xtend
