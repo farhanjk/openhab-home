@@ -6,17 +6,24 @@ Group HU_Living_Lamp1     "Lamp 1"   <lightbulb>     (HU_Living)   ["LivingRoomL
 Group HU_Living_Lamp2     "Lamp 2"   <lightbulb>     (HU_Living)   ["LivingRoomLamp2"]
 Group HU_Living_Lamp3     "Lamp 3"   <lightbulb>     (HU_Living)   ["LivingRoomLamp3"]
 
-Color    Home_Upstairs_Lamp1_Color              "Color"        <colorwheel> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:color"}
-Dimmer   Home_Upstairs_Lamp1_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:color_temperature"}
-String   Home_Upstairs_Lamp1_Alert              "Alert"        <siren> (HU_Living_Lamp1)      {channel="hue:0210:0017882c360b:1:alert"}
-Switch   Home_Upstairs_Lamp1_Effect             "Loop"         <rgb> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:effect"}
+Group HU_Living_Lights "All Living Room Lights" ["Living Room Lights"]
 
-Color    Home_Upstairs_Lamp2_Color              "Color"        <colorwheel> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:color"}
-Dimmer   Home_Upstairs_Lamp2_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:color_temperature"}
-String   Home_Upstairs_Lamp2_Alert              "Alert"        <siren> (HU_Living_Lamp2)      {channel="hue:0210:0017882c360b:2:alert"}
-Switch   Home_Upstairs_Lamp2_Effect             "Loop"         <rgb> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:effect"}
+// Dimmer HU_Living_Dimmer "Dimmer" (HU_Living)
+Group  HU_Living_Dimmer_Group "Dimmer Group"
 
-Color    Home_Upstairs_Lamp3_Color              "Color"        <colorwheel> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:color"}
-Dimmer   Home_Upstairs_Lamp3_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:color_temperature"}
-String   Home_Upstairs_Lamp3_Alert              "Alert"        <siren> (HU_Living_Lamp3)      {channel="hue:0210:0017882c360b:3:alert"}
-Switch   Home_Upstairs_Lamp3_Effect             "Loop"         <rgb> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:effect"}
+Number HU_Living_Mood
+
+Color    HU_Living_Lamp1_Color              "Brightness"        <colorwheel> (HU_Living_Lamp1, HU_Living_Lights, HU_Living_Dimmer_Group) {channel="hue:0210:0017882c360b:1:color"}
+// Dimmer   HU_Living_Lamp1_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:color_temperature"}
+// String   HU_Living_Lamp1_Alert              "Alert"        <siren> (HU_Living_Lamp1)      {channel="hue:0210:0017882c360b:1:alert"}
+// Switch   HU_Living_Lamp1_Effect             "Loop"         <rgb> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:effect"}
+
+Color    HU_Living_Lamp2_Color              "Brightness"        <colorwheel> (HU_Living_Lamp2, HU_Living_Lights, HU_Living_Dimmer_Group) {channel="hue:0210:0017882c360b:2:color"}
+// Dimmer   HU_Living_Lamp2_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:color_temperature"}
+// String   HU_Living_Lamp2_Alert              "Alert"        <siren> (HU_Living_Lamp2)      {channel="hue:0210:0017882c360b:2:alert"}
+// Switch   HU_Living_Lamp2_Effect             "Loop"         <rgb> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:effect"}
+
+Color    HU_Living_Lamp3_Color              "Brightness"        <colorwheel> (HU_Living_Lamp3, HU_Living_Lights, HU_Living_Dimmer_Group) {channel="hue:0210:0017882c360b:3:color"}
+// Dimmer   HU_Living_Lamp3_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:color_temperature"}
+// String   HU_Living_Lamp3_Alert              "Alert"        <siren> (HU_Living_Lamp3)      {channel="hue:0210:0017882c360b:3:alert"}
+// Switch   HU_Living_Lamp3_Effect             "Loop"         <rgb> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:effect"}

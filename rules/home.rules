@@ -1,0 +1,7 @@
+// rule "Control Dimmer"
+// when
+//     Item HU_Living_Dimmer changed
+// then
+//     HU_Living_Dimmer_Group.sendCommand(HU_Living_Dimmer.state as Number)
+//     logInfo("Control Dimmer", HU_Living_Dimmer.state.toString)
+// end

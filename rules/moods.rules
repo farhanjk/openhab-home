@@ -1,0 +1,93 @@
+// rule "Control Dimmer"
+// when
+//     Item HU_Living_Dimmer changed
+// then
+//     HU_Living_Dimmer_Group.sendCommand(HU_Living_Dimmer.state as Number)
+//     logInfo("Control Dimmer", HU_Living_Dimmer.state.toString)
+// end
+
+var Integer contant_mode_key_off = 0
+var Integer contant_mode_key_dim = 1
+var Integer contant_mode_key_tv = 2
+var Integer contant_mode_key_reading = 3
+var Integer contant_mode_key_bright = 4
+
+var Integer contant_mode_value_off = 0
+var Integer contant_mode_value_dim = 25
+var Integer contant_mode_value_tv = 50
+var Integer contant_mode_value_reading = 75
+var Integer contant_mode_value_bright = 100
+
+rule "Translate Dimmers Value to Mood"
+when
+    Item HU_Living_Dimmer_Group changed
+then
+    if (HU_Living_Dimmer_Group.state <= contant_mode_value_off)
+	{
+        HU_Living_Mood.sendCommand(contant_mode_key_off)
+	}
+	else if (HU_Living_Dimmer_Group.state <= contant_mode_value_dim)
+	{
+        HU_Living_Mood.sendCommand(contant_mode_key_dim)
+	}
+	else if (HU_Living_Dimmer_Group.state <= contant_mode_value_tv)
+	{
+        HU_Living_Mood.sendCommand(contant_mode_key_tv)
+	}
+	else if (HU_Living_Dimmer_Group.state <= contant_mode_value_reading)
+	{
+        HU_Living_Mood.sendCommand(contant_mode_key_reading)
+	}
+	else 
+	{
+        HU_Living_Mood.sendCommand(contant_mode_key_bright)
+	}
+end
+
+rule "Translate Mood To Dimmers Value"
+when
+    Item HU_Living_Mood changed
+then
+	var moodValue = HU_Living_Mood.state
+	var dimmerValue = HU_Living_Dimmer_Group.state
+
+    switch moodValue
+		{
+			case contant_mode_key_off:
+				{
+					if (dimmerValue>contant_mode_value_off) {
+						HU_Living_Dimmer_Group.sendCommand(contant_mode_value_off)
+					}
+				}
+			case contant_mode_key_dim:
+				{
+					if (dimmerValue<=contant_mode_value_off || dimmerValue>contant_mode_value_dim) {
+		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_dim)
+					}
+				}
+			case contant_mode_key_tv:
+				{
+					if (dimmerValue<=contant_mode_value_dim || dimmerValue>contant_mode_value_tv) {
+		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_tv)
+					}
+				}
+			case contant_mode_key_reading:
+				{
+					if (dimmerValue<=contant_mode_value_tv || dimmerValue>contant_mode_value_reading) {
+		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_reading)
+					}
+				}
+			case contant_mode_key_bright:
+				{
+					if (dimmerValue<=contant_mode_value_reading || dimmerValue>contant_mode_value_bright) {
+		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_bright)
+					}
+				}
+			default:
+				{
+					if (dimmerValue<=contant_mode_value_off || dimmerValue>contant_mode_value_dim) {
+		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_dim)
+					}
+				}
+		}
+end

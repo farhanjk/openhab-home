@@ -1,8 +1,17 @@
 sitemap home label="Home"
 {
+	Frame label="Date" {
+        Text item=CurrentDate
+    }
 	Frame label="Floors" {
 		Group item=gHU label="Upstairs" icon="firstfloor"
 		Group item=gHD label="Downstairs" icon="groundfloor"
+
+		// Switch item=HU_Living_Dimmer_Group //mappings=[OFF="Off", ON="On"]
+		Slider item=HU_Living_Dimmer_Group label="All Living Room Lights" minValue=0 maxValue=100
+
+		Setpoint item=HU_Living_Mood label="Mood [MAP(moods.map):%s]" minValue=0 maxValue=4 step=1
+		Switch item=HU_Living_Mood label="Mood" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
 	}
 }
 
