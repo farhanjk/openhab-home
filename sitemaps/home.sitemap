@@ -4,14 +4,34 @@ sitemap home label="Home"
         Text item=CurrentDate
     }
 	Frame label="Floors" {
-		Group item=gHU label="Upstairs" icon="firstfloor"
 		Group item=gHD label="Downstairs" icon="groundfloor"
 
-		// Switch item=HU_Living_Dimmer_Group //mappings=[OFF="Off", ON="On"]
-		Slider item=HU_Living_Dimmer_Group label="All Living Room Lights" minValue=0 maxValue=100
+		Text  label="Upstairs" icon="firstfloor" {
+			Slider item=HU_Living_Dimmer_Group label="All Living Room Lights" minValue=0 maxValue=100
+			Colorpicker item=HU_Living_Dimmer_Group label="Color" icon="colorwheel"
 
-		Setpoint item=HU_Living_Mood label="Mood [MAP(moods.map):%s]" minValue=0 maxValue=4 step=1
-		Switch item=HU_Living_Mood label="Mood" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
+			Switch item=HU_Living_Dimmer_Group_Mood label="Mood" icon="party" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
+
+			Text  label="Living Room" icon="sofa" {
+				Frame label="Lamp 1" {				
+					Slider item=HU_Living_Lamp1_Color label="Status" minValue=0 maxValue=100
+					Colorpicker item=HU_Living_Lamp1_Color label="Color" icon="colorwheel"
+					Switch item=HU_Living_Lamp1_Color_Mood label="Mood" icon="party" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
+				}
+				Frame label="Lamp 2" {				
+					Slider item=HU_Living_Lamp2_Color label="Status" minValue=0 maxValue=100
+					Colorpicker item=HU_Living_Lamp2_Color label="Color" icon="colorwheel"
+					Switch item=HU_Living_Lamp2_Color_Mood label="Mood" icon="party" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
+				}
+				Frame label="Lamp 3" {				
+					Slider item=HU_Living_Lamp3_Color label="Status" minValue=0 maxValue=100
+					Colorpicker item=HU_Living_Lamp3_Color label="Color" icon="colorwheel"
+					Switch item=HU_Living_Lamp3_Color_Mood label="Mood" icon="party" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
+				}
+			}
+
+		}
+
 	}
 }
 

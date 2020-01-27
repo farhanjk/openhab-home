@@ -1,93 +1,110 @@
-// rule "Control Dimmer"
-// when
-//     Item HU_Living_Dimmer changed
-// then
-//     HU_Living_Dimmer_Group.sendCommand(HU_Living_Dimmer.state as Number)
-//     logInfo("Control Dimmer", HU_Living_Dimmer.state.toString)
-// end
+import org.eclipse.smarthome.model.script.ScriptServiceUtil
+import java.util.concurrent.locks.ReentrantLock
 
-var Integer contant_mode_key_off = 0
-var Integer contant_mode_key_dim = 1
-var Integer contant_mode_key_tv = 2
-var Integer contant_mode_key_reading = 3
-var Integer contant_mode_key_bright = 4
+val toMood= [ Number dimmerValue |
+    if (dimmerValue <= 0) {
+        return 0
+	} else if (dimmerValue <= 25) {
+        return 1
+	} else if (dimmerValue <= 50) {
+        return 2	
+	} else if (dimmerValue <= 75) {
+        return 3
+	} else 	{
+        return 4
+	}
+]
 
-var Integer contant_mode_value_off = 0
-var Integer contant_mode_value_dim = 25
-var Integer contant_mode_value_tv = 50
-var Integer contant_mode_value_reading = 75
-var Integer contant_mode_value_bright = 100
+val fromMood= [ Number moodValue, bright |
+	var Number localBright
+	
+	if (!(bright instanceof Number)) {
+		localBright = 100
+	} else {
+		localBright = bright
+	}
 
-rule "Translate Dimmers Value to Mood"
-when
-    Item HU_Living_Dimmer_Group changed
+    switch moodValue
+		{
+			case 0:
+				if (localBright > 0) {
+					return 0
+				}
+			case 1:
+				if (localBright <= 0 || localBright > 25) {
+					return 25
+				}
+			case 2:
+				if (localBright <= 25 || localBright > 50) {
+					return 50
+				}
+			case 3:  
+				if (localBright <= 50 || localBright > 75) {
+					return 75
+				}
+			case 4:
+				if (localBright <= 75) {
+					return 100
+				}
+			default:
+				return 25
+		}
+	return localBright
+]
+
+val ReentrantLock lockMood  = new ReentrantLock()
+
+rule "Translate Dimmers to Mood"
+when 
+	Member of gMoodDimmers changed
 then
-    if (HU_Living_Dimmer_Group.state <= contant_mode_value_off)
-	{
-        HU_Living_Mood.sendCommand(contant_mode_key_off)
+	// logInfo("TranslateToMood", triggeringItem.name + ": " + triggeringItem.state + ": " + triggeringItem.type) 
+	
+	var bright = 0
+	if (triggeringItem instanceof GroupItem) {
+		bright = triggeringItem.state
+	} else {
+	 	bright = (triggeringItem.state as HSBType).brightness
 	}
-	else if (HU_Living_Dimmer_Group.state <= contant_mode_value_dim)
-	{
-        HU_Living_Mood.sendCommand(contant_mode_key_dim)
-	}
-	else if (HU_Living_Dimmer_Group.state <= contant_mode_value_tv)
-	{
-        HU_Living_Mood.sendCommand(contant_mode_key_tv)
-	}
-	else if (HU_Living_Dimmer_Group.state <= contant_mode_value_reading)
-	{
-        HU_Living_Mood.sendCommand(contant_mode_key_reading)
-	}
-	else 
-	{
-        HU_Living_Mood.sendCommand(contant_mode_key_bright)
+
+    val moodValue = toMood.apply(bright)
+	val moodItemName = triggeringItem.name + "_Mood"
+	// logInfo("Mood", triggeringItem.name + ": " + bright + ": " + moodValue + ": " + moodItemName)
+
+	try {
+		val moodItem = ScriptServiceUtil.getItemRegistry.getItem(moodItemName)
+		if (moodItem.state != moodValue) {
+			moodItem.postUpdate(moodValue) 
+			// logInfo("Mood", moodItemName + " set to value " + moodValue)
+		} else {
+			// logInfo("Mood", moodItemName + " was already at value " + moodValue)
+		}
+	} catch(ItemNotFoundException ex) {
+		logInfo("Mood", moodItemName + " not found")
 	}
 end
 
 rule "Translate Mood To Dimmers Value"
 when
-    Item HU_Living_Mood changed
+	Member of gMood changed
 then
-	var moodValue = HU_Living_Mood.state
-	var dimmerValue = HU_Living_Dimmer_Group.state
-
-    switch moodValue
-		{
-			case contant_mode_key_off:
-				{
-					if (dimmerValue>contant_mode_value_off) {
-						HU_Living_Dimmer_Group.sendCommand(contant_mode_value_off)
-					}
-				}
-			case contant_mode_key_dim:
-				{
-					if (dimmerValue<=contant_mode_value_off || dimmerValue>contant_mode_value_dim) {
-		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_dim)
-					}
-				}
-			case contant_mode_key_tv:
-				{
-					if (dimmerValue<=contant_mode_value_dim || dimmerValue>contant_mode_value_tv) {
-		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_tv)
-					}
-				}
-			case contant_mode_key_reading:
-				{
-					if (dimmerValue<=contant_mode_value_tv || dimmerValue>contant_mode_value_reading) {
-		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_reading)
-					}
-				}
-			case contant_mode_key_bright:
-				{
-					if (dimmerValue<=contant_mode_value_reading || dimmerValue>contant_mode_value_bright) {
-		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_bright)
-					}
-				}
-			default:
-				{
-					if (dimmerValue<=contant_mode_value_off || dimmerValue>contant_mode_value_dim) {
-		                HU_Living_Dimmer_Group.sendCommand(contant_mode_value_dim)
-					}
-				}
+	lockMood.lock()
+ 	val dimmerName = triggeringItem.name.replace("_Mood", "")
+ 	try {
+ 		val dimmerItem = ScriptServiceUtil.getItemRegistry.getItem(dimmerName)
+		var bright = 0
+		if (dimmerItem.state instanceof HSBType) {
+			bright = (dimmerItem.state as HSBType).brightness
+		} else {
+			bright = dimmerItem.state
 		}
+		logError("Dimmer", dimmerItem.name + " is " + bright) 
+ 	 	val dimmerValue = fromMood.apply(triggeringItem.state, bright)
+ 		dimmerItem.sendCommand(dimmerValue) 
+		// logInfo("Dimmer", dimmerItem.name + " set to value " + dimmerValue) 
+ 	} catch(ItemNotFoundException ex) {
+ 		logInfo("Dimmer", moodItemName + " not found")
+ 	} finally {
+		 lockMood.unlock()
+	 }
 end
