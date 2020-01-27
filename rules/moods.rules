@@ -52,8 +52,6 @@ val fromMood= [ Number moodValue, bright |
 	return localBright
 ]
 
-val ReentrantLock lockMood  = new ReentrantLock()
-
 rule "Translate Dimmers to Mood"
 when 
 	Member of gMoodDimmers changed
@@ -88,7 +86,6 @@ rule "Translate Mood To Dimmers Value"
 when
 	Member of gMood changed
 then
-	lockMood.lock()
  	val dimmerName = triggeringItem.name.replace("_Mood", "")
  	try {
  		val dimmerItem = ScriptServiceUtil.getItemRegistry.getItem(dimmerName)
@@ -104,7 +101,5 @@ then
 		// logInfo("Dimmer", dimmerItem.name + " set to value " + dimmerValue) 
  	} catch(ItemNotFoundException ex) {
  		logInfo("Dimmer", moodItemName + " not found")
- 	} finally {
-		 lockMood.unlock()
-	 }
+ 	}
 end
