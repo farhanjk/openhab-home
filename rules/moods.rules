@@ -1,5 +1,4 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
-import java.util.concurrent.locks.ReentrantLock
 
 val toMood= [ Number dimmerValue |
     if (dimmerValue <= 0) {
@@ -60,7 +59,14 @@ then
 	
 	var bright = 0
 	if (triggeringItem instanceof GroupItem) {
-		bright = triggeringItem.state
+		if(triggeringItem.state == ON) {
+			bright = 100
+		} else if(triggeringItem.state == OFF) {
+			bright = 0
+		} else  {
+			bright = triggeringItem.state
+		}
+
 	} else {
 	 	bright = (triggeringItem.state as HSBType).brightness
 	}
@@ -103,3 +109,4 @@ then
  		logInfo("Dimmer", moodItemName + " not found")
  	}
 end
+ 
