@@ -7,10 +7,10 @@ sitemap home label="Home"
 		Group item=gHD label="Downstairs" icon="groundfloor"
 
 		Text  label="Upstairs" icon="firstfloor" {
-			Slider item=HU_Living_Dimmer_Group label="All Living Room Lights" minValue=0 maxValue=100
+			Slider item=HU_Living_Dimmer_Group_h label="All Living Room Lights" minValue=0 maxValue=100
 			Colorpicker item=HU_Living_Dimmer_Group label="Color" icon="colorwheel"
 
-			Switch item=HU_Living_Dimmer_Group_Mood label="Mood" icon="party" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
+			Switch item=HU_Living_Dimmer_Group_h_Mood label="Mood" icon="party" mappings=[0=OFF, 1=Dim, 2=TV, 3=Reading, 4=Bright]
 
 			Text  label="Living Room" icon="sofa" {
 				Frame label="Lamp 1" {				

@@ -1,26 +1,28 @@
 Group gHU           "Upstairs"   <upstairs>    ["FirstFloor"]
 Group gHD           "Downstairs"  <downstairs>   ["GroundFloor"]
 
-Group gMoodDimmers "All Dimmers with Mood" ["MoodLights"]
-Group gMood "All Moods for dimmers" ["MoodLights"]
+Group gMoodDimmersh "All Dimmers with Mood" ["MoodLights"]
+Group gMoodh "All Moods for dimmers" ["MoodLights"]
 
-Group HU_Living_Dimmer_Group "Dimmer Group" (gMoodDimmers)
-Number HU_Living_Dimmer_Group_Mood (gMood)
+Group HU_Living_Dimmer_Group "Dimmer Group" 
 
-Color    HU_Living_Lamp1_Color              "Brightness"        <colorwheel> (HU_Living_Dimmer_Group, gMoodDimmers) {channel="hue:0210:0017882c360b:1:color"}
-Number HU_Living_Lamp1_Color_Mood (gMood)
+Group:Dimmer:AVG HU_Living_Dimmer_Group_h "Dimmer Group" (gMoodDimmersh)
+Number HU_Living_Dimmer_Group_h_Mood (gMoodh)
+
+Color    HU_Living_Lamp1_Color              "Brightness"        <colorwheel> (HU_Living_Dimmer_Group_h, gMoodDimmersh, HU_Living_Dimmer_Group) {channel="hue:0210:0017882c360b:1:color"}
+Number HU_Living_Lamp1_Color_Mood (gMoodh)
 // Dimmer   HU_Living_Lamp1_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:color_temperature"}
 // String   HU_Living_Lamp1_Alert              "Alert"        <siren> (HU_Living_Lamp1)      {channel="hue:0210:0017882c360b:1:alert"}
 // Switch   HU_Living_Lamp1_Effect             "Loop"         <rgb> (HU_Living_Lamp1) {channel="hue:0210:0017882c360b:1:effect"}
 
-Color    HU_Living_Lamp2_Color              "Brightness"        <colorwheel> (HU_Living_Dimmer_Group, gMoodDimmers) {channel="hue:0210:0017882c360b:2:color"}
-Number HU_Living_Lamp2_Color_Mood (gMood)
+Color    HU_Living_Lamp2_Color              "Brightness"        <colorwheel> (HU_Living_Dimmer_Group_h, gMoodDimmersh, HU_Living_Dimmer_Group)  {channel="hue:0210:0017882c360b:2:color"}
+Number HU_Living_Lamp2_Color_Mood (gMoodh)
 // Dimmer   HU_Living_Lamp2_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:color_temperature"}
 // String   HU_Living_Lamp2_Alert              "Alert"        <siren> (HU_Living_Lamp2)      {channel="hue:0210:0017882c360b:2:alert"}
 // Switch   HU_Living_Lamp2_Effect             "Loop"         <rgb> (HU_Living_Lamp2) {channel="hue:0210:0017882c360b:2:effect"}
 
-Color    HU_Living_Lamp3_Color              "Brightness"        <colorwheel> (HU_Living_Dimmer_Group, gMoodDimmers) {channel="hue:0210:0017882c360b:3:color"}
-Number HU_Living_Lamp3_Color_Mood (gMood)
+Color    HU_Living_Lamp3_Color              "Brightness"        <colorwheel> (HU_Living_Dimmer_Group_h, gMoodDimmersh, HU_Living_Dimmer_Group) {channel="hue:0210:0017882c360b:3:color"}
+Number HU_Living_Lamp3_Color_Mood (gMoodh)
 // Dimmer   HU_Living_Lamp3_ColorTemperature   "Temperature"  <slider> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:color_temperature"}
 // String   HU_Living_Lamp3_Alert              "Alert"        <siren> (HU_Living_Lamp3)      {channel="hue:0210:0017882c360b:3:alert"}
 // Switch   HU_Living_Lamp3_Effect             "Loop"         <rgb> (HU_Living_Lamp3) {channel="hue:0210:0017882c360b:3:effect"}

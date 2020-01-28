@@ -14,99 +14,93 @@ val toMood= [ Number dimmerValue |
 	}
 ]
 
-val fromMood= [ Number moodValue, bright |
-	var Number localBright
-	
-	if (!(bright instanceof Number)) {
-		localBright = 100
-	} else {
-		localBright = bright
+val toDimmer= [ Number moodValue |
+    if (moodValue <= 0) {
+        return 0
+	} else if (moodValue <= 1) {
+        return 25
+	} else if (moodValue <= 2) {
+        return 50	
+	} else if (moodValue <= 3) {
+        return 75
+	} else 	{
+        return 100
 	}
-
-    switch moodValue
-		{
-			case 0:
-				if (localBright > 0) {
-					return 0
-				}
-			case 1:
-				if (localBright <= 0 || localBright > 25) {
-					return 25
-				}
-			case 2:
-				if (localBright <= 25 || localBright > 50) {
-					return 50
-				}
-			case 3:  
-				if (localBright <= 50 || localBright > 75) {
-					return 75
-				}
-			case 4:
-				if (localBright <= 75) {
-					return 100
-				}
-			default:
-				return 25
-		}
-	return localBright
 ]
 
-rule "Translate Dimmers to Mood"
+var Boolean lockD = false
+var Boolean itmsLockD = false
+var Boolean moodLockD = false
+
+
+rule "Translate Dimmers to Mood - Group"
 when 
-	Member of gMoodDimmers changed
+	Member of gMoodDimmersh changed
 then
-	// logInfo("TranslateToMood", triggeringItem.name + ": " + triggeringItem.state + ": " + triggeringItem.type) 
-	
-	var bright = 0
-	if (triggeringItem instanceof GroupItem) {
-		if(triggeringItem.state == ON) {
-			bright = 100
-		} else if(triggeringItem.state == OFF) {
-			bright = 0
-		} else  {
-			bright = triggeringItem.state
-		}
-
-	} else {
-	 	bright = (triggeringItem.state as HSBType).brightness
+	if (!(triggeringItem instanceof GroupItem)) {
+		return
 	}
-
-    val moodValue = toMood.apply(bright)
-	val moodItemName = triggeringItem.name + "_Mood"
-	// logInfo("Mood", triggeringItem.name + ": " + bright + ": " + moodValue + ": " + moodItemName)
-
-	try {
-		val moodItem = ScriptServiceUtil.getItemRegistry.getItem(moodItemName)
-		if (moodItem.state != moodValue) {
-			moodItem.postUpdate(moodValue) 
-			// logInfo("Mood", moodItemName + " set to value " + moodValue)
-		} else {
-			// logInfo("Mood", moodItemName + " was already at value " + moodValue)
+	logInfo("22", triggeringItem.state.toString)
+	if(!lockD) {
+		lockD = true
+		val moodItemName = triggeringItem.name + "_Mood"
+		val value = triggeringItem.getStateAs(PercentType)
+		val moodValue = toMood.apply(value)
+		try {
+			val moodItem = ScriptServiceUtil.getItemRegistry.getItem(moodItemName)
+			moodItem.postUpdate(moodValue)
+		} catch (ItemNotFoundException ex) {
+  			logInfo("22", moodItemName + " not found")
+	  	} finally {
+			lockD = false
 		}
-	} catch(ItemNotFoundException ex) {
-		logInfo("Mood", moodItemName + " not found")
 	}
 end
 
-rule "Translate Mood To Dimmers Value"
+rule "Translate Dimmers to Mood - Items"
+when 
+	Member of gMoodDimmersh changed
+then
+	if (!(triggeringItem instanceof ColorItem)) {
+		return
+	}
+	if(!itmsLockD) {
+		itmsLockD = true
+		val moodItemName = triggeringItem.name + "_Mood"
+		val value = triggeringItem.getStateAs(PercentType)
+		val moodValue = toMood.apply(value)
+		try {
+			val moodItem = ScriptServiceUtil.getItemRegistry.getItem(moodItemName)
+			moodItem.postUpdate(moodValue)
+		} catch (ItemNotFoundException ex) {
+  			logInfo("22", moodItemName + " not found")
+	  	} finally {
+			itmsLockD = false
+		}
+	}
+end
+
+rule "Translate Mood To Dimmers Value - Group"
 when
-	Member of gMood changed
+	Member of gMoodh received command
 then
- 	val dimmerName = triggeringItem.name.replace("_Mood", "")
- 	try {
- 		val dimmerItem = ScriptServiceUtil.getItemRegistry.getItem(dimmerName)
-		var bright = 0
-		if (dimmerItem.state instanceof HSBType) {
-			bright = (dimmerItem.state as HSBType).brightness
-		} else {
-			bright = dimmerItem.state
+	if (!(triggeringItem instanceof NumberItem)) {
+		return
+	}
+	if(!moodLockD) {
+		moodLockD = true
+		val percentValue = toDimmer.apply(receivedCommand as DecimalType)
+
+		val dimmerItemName = triggeringItem.name.replace("_Mood", "")
+		logInfo("(2)", percentValue.toString + " " + dimmerItemName)
+
+		try {
+			val dimmerItem = ScriptServiceUtil.getItemRegistry.getItem(dimmerItemName)
+			dimmerItem.sendCommand(percentValue)
+		} catch (ItemNotFoundException ex) {
+  			logInfo("22", dimmerItemName + " not found")
+	  	} finally {
+			moodLockD = false
 		}
-		logError("Dimmer", dimmerItem.name + " is " + bright) 
- 	 	val dimmerValue = fromMood.apply(triggeringItem.state, bright)
- 		dimmerItem.sendCommand(dimmerValue) 
-		// logInfo("Dimmer", dimmerItem.name + " set to value " + dimmerValue) 
- 	} catch(ItemNotFoundException ex) {
- 		logInfo("Dimmer", moodItemName + " not found")
- 	}
+	}
 end
- 
